@@ -11,8 +11,8 @@ import lombok.*;
 @Table(
     name = "users",
     uniqueConstraints = {
-        @UniqueConstraint(columnNames = "userName"),
-        @UniqueConstraint(columnNames = "emailId")
+      @UniqueConstraint(columnNames = "userName"),
+      @UniqueConstraint(columnNames = "emailId")
     })
 public class Users {
 

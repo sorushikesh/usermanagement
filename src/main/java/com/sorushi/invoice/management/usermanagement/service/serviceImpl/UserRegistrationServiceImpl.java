@@ -3,6 +3,7 @@ package com.sorushi.invoice.management.usermanagement.service.serviceImpl;
 import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.USERNAME_ALREADY_EXIST;
 import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.USER_EMAIL_ALREADY_EXIST;
 
+import com.sorushi.invoice.management.usermanagement.configuration.MessageSourceConfig;
 import com.sorushi.invoice.management.usermanagement.dto.UserDetails;
 import com.sorushi.invoice.management.usermanagement.entity.Users;
 import com.sorushi.invoice.management.usermanagement.exception.UserManagementServiceException;
@@ -10,6 +11,7 @@ import com.sorushi.invoice.management.usermanagement.repository.UserRepository;
 import com.sorushi.invoice.management.usermanagement.service.UserRegistrationService;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
   private final UserRepository userRepository;
 
-  public UserRegistrationServiceImpl(MessageSource messageSource, UserRepository userRepository) {
+  public UserRegistrationServiceImpl(
+      @Qualifier(MessageSourceConfig.MESSAGE_SOURCE) MessageSource messageSource,
+      UserRepository userRepository) {
     this.messageSource = messageSource;
     this.userRepository = userRepository;
   }

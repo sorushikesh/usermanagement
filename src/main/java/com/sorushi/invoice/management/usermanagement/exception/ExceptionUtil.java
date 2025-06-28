@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 
 @Slf4j
-class ExceptionUtil {
+public class ExceptionUtil {
 
   private ExceptionUtil() {}
 
@@ -23,17 +23,26 @@ class ExceptionUtil {
       log.warn("HttpStatus is null");
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     }
+
     if (messageSource == null) {
       log.warn("Message source is null");
       return ProblemDetail.forStatusAndDetail(httpStatus, "Message source is null");
     }
+
     if (errorCode == null) {
       log.warn("Error code is null");
-      return ProblemDetail.forStatusAndDetail(httpStatus, "ErrorCode is null");
+      return ProblemDetail.forStatusAndDetail(httpStatus, "Error code is null");
     }
 
-    String errorMessage =
-        messageSource.getMessage(errorCode, errorMessageArguments, LocaleContextHolder.getLocale());
+    String errorMessage;
+    try {
+      errorMessage =
+          messageSource.getMessage(
+              errorCode, errorMessageArguments, LocaleContextHolder.getLocale());
+    } catch (Exception e) {
+      log.error("Unable to fetch message for errorCode: {}", errorCode, e);
+      errorMessage = "Message not found for errorCode: " + errorCode;
+    }
 
     return ProblemDetail.forStatusAndDetail(httpStatus, errorCode + COLON + errorMessage);
   }
