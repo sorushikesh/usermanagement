@@ -6,14 +6,12 @@ import static com.sorushi.invoice.management.usermanagement.constants.APIEndpoin
 import com.sorushi.invoice.management.usermanagement.dto.UserDetails;
 import com.sorushi.invoice.management.usermanagement.entity.Users;
 import com.sorushi.invoice.management.usermanagement.service.serviceImpl.UserRegistrationServiceImpl;
+import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Locale;
 
 @SuppressWarnings("unused")
 @Slf4j
@@ -26,6 +24,7 @@ public class UserController {
   public UserController(UserRegistrationServiceImpl userRegistrationService) {
     this.userRegistrationService = userRegistrationService;
   }
+
   @PostMapping(REGISTER_USER)
   public ResponseEntity<Users> registerUser(
       @RequestBody UserDetails userDetails,
@@ -42,5 +41,4 @@ public class UserController {
     Users users = userRegistrationService.registerUser(userDetails);
     return ResponseEntity.ok(users);
   }
-
 }
