@@ -1,11 +1,11 @@
 package com.sorushi.invoice.management.usermanagement.controller;
 
-import static com.sorushi.invoice.management.usermanagement.constants.APIEndpoints.API_USER_MANAGEMENT_SERVICE;
 import static com.sorushi.invoice.management.usermanagement.constants.APIEndpoints.REGISTER_USER;
+import static com.sorushi.invoice.management.usermanagement.constants.APIEndpoints.USER;
 
 import com.sorushi.invoice.management.usermanagement.dto.UserDetails;
 import com.sorushi.invoice.management.usermanagement.entity.Users;
-import com.sorushi.invoice.management.usermanagement.service.serviceImpl.UserRegistrationServiceImpl;
+import com.sorushi.invoice.management.usermanagement.service.serviceImpl.UserServiceImpl;
 import java.util.Locale;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 @SuppressWarnings("unused")
 @Slf4j
 @RestController
-@RequestMapping(API_USER_MANAGEMENT_SERVICE)
+@RequestMapping(USER)
 public class UserController {
 
-  private final UserRegistrationServiceImpl userRegistrationService;
+  private final UserServiceImpl userRegistrationService;
 
-  public UserController(UserRegistrationServiceImpl userRegistrationService) {
+  public UserController(UserServiceImpl userRegistrationService) {
     this.userRegistrationService = userRegistrationService;
   }
 
@@ -37,7 +37,7 @@ public class UserController {
       LocaleContextHolder.setDefaultLocale(Locale.ENGLISH);
     }
 
-    log.info("User registration starts for user {}", userDetails.getUserName());
+    log.info("User registration starts for user {}", userDetails.getEmailId());
     Users users = userRegistrationService.registerUser(userDetails);
     return ResponseEntity.ok(users);
   }

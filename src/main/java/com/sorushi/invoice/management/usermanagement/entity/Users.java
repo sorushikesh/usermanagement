@@ -10,10 +10,7 @@ import lombok.*;
 @Entity
 @Table(
     name = "users",
-    uniqueConstraints = {
-      @UniqueConstraint(columnNames = "userName"),
-      @UniqueConstraint(columnNames = "emailId")
-    })
+    uniqueConstraints = {@UniqueConstraint(columnNames = "emailId")})
 public class Users {
 
   @Id
@@ -21,7 +18,10 @@ public class Users {
   private Long id;
 
   @Column(nullable = false)
-  private String userName;
+  private String firstName;
+
+  @Column(nullable = false)
+  private String lastName;
 
   @Column(nullable = false)
   private String emailId;
