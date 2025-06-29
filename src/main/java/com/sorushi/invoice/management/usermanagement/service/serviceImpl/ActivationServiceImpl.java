@@ -1,6 +1,6 @@
 package com.sorushi.invoice.management.usermanagement.service.serviceImpl;
 
-import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.FAILED_TO_SEND_MAIL;
+import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.*;
 
 import com.sorushi.invoice.management.usermanagement.configuration.MessageSourceConfig;
 import com.sorushi.invoice.management.usermanagement.entity.OtpToken;
@@ -46,6 +46,15 @@ public class ActivationServiceImpl implements ActivationService {
 
   @Override
   public void generateAndSendOtp(String email) {
+
+    log.info("Checking if user exist or not for email {}", email);
+    Optional<Users> userByEmail = userService.getUserByEmailId(email);
+    if (userByEmail.isEmpty()) {
+      log.error("User not exist in system for email {}", email);
+      throw new UserManagementServiceException(
+          HttpStatus.BAD_REQUEST, USER_EMAIL_NOT_EXIST, new Object[] {email}, messageSource);
+    }
+
     log.info("Generating OTP for user {}", email);
     String otp = String.valueOf(this.random.nextInt(900000) + 100000);
     LocalDateTime expiry = LocalDateTime.now().plusMinutes(15);
