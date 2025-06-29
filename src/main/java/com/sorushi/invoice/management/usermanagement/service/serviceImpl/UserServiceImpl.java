@@ -37,7 +37,10 @@ public class UserServiceImpl implements UserService {
     if (userByEmail.isPresent()) {
       log.error("User already exist in system for email {}", userDetails.getEmailId());
       throw new UserManagementServiceException(
-          HttpStatus.BAD_REQUEST, USER_EMAIL_ALREADY_EXIST, null, messageSource);
+          HttpStatus.BAD_REQUEST,
+          USER_EMAIL_ALREADY_EXIST,
+          new Object[] {userDetails.getEmailId()},
+          messageSource);
     }
 
     Users users =
