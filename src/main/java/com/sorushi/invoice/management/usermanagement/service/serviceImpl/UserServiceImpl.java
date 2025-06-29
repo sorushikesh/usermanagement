@@ -1,14 +1,13 @@
 package com.sorushi.invoice.management.usermanagement.service.serviceImpl;
 
-import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.USERNAME_ALREADY_EXIST;
-import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.USER_EMAIL_ALREADY_EXIST;
+import static com.sorushi.invoice.management.usermanagement.exception.ErrorCodes.*;
 
 import com.sorushi.invoice.management.usermanagement.configuration.MessageSourceConfig;
 import com.sorushi.invoice.management.usermanagement.dto.UserDetails;
 import com.sorushi.invoice.management.usermanagement.entity.Users;
 import com.sorushi.invoice.management.usermanagement.exception.UserManagementServiceException;
 import com.sorushi.invoice.management.usermanagement.repository.UserRepository;
-import com.sorushi.invoice.management.usermanagement.service.UserRegistrationService;
+import com.sorushi.invoice.management.usermanagement.service.UserService;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,13 +17,12 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class UserRegistrationServiceImpl implements UserRegistrationService {
+public class UserServiceImpl implements UserService {
 
   private final MessageSource messageSource;
-
   private final UserRepository userRepository;
 
-  public UserRegistrationServiceImpl(
+  public UserServiceImpl(
       @Qualifier(MessageSourceConfig.MESSAGE_SOURCE) MessageSource messageSource,
       UserRepository userRepository) {
     this.messageSource = messageSource;
@@ -34,14 +32,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
   @Override
   public Users registerUser(UserDetails userDetails) throws UserManagementServiceException {
 
-    log.info("Checking if user already exist or not");
-    Optional<Users> userByUserName = getUserByUserName(userDetails.getUserName());
-    if (userByUserName.isPresent()) {
-      log.error("User already exist in system for userName {}", userDetails.getUserName());
-      throw new UserManagementServiceException(
-          HttpStatus.BAD_REQUEST, USERNAME_ALREADY_EXIST, null, messageSource);
-    }
-
+    log.info("Checking if user already exist or not for email {}", userDetails.getEmailId());
     Optional<Users> userByEmail = getUserByEmailId(userDetails.getEmailId());
     if (userByEmail.isPresent()) {
       log.error("User already exist in system for email {}", userDetails.getEmailId());
@@ -51,7 +42,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     Users users =
         Users.builder()
-            .userName(userDetails.getUserName())
+            .firstName(userDetails.getFirstName())
+            .lastName(userDetails.getLastName())
             .emailId(userDetails.getEmailId())
             .password(userDetails.getPassword())
             .role("DEFAULT")
@@ -61,16 +53,20 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
   }
 
   @Override
-  public Optional<Users> getUserByUserName(String userName) {
-    log.info("Fetching user for user {}", userName);
-    Users users = userRepository.findByUserName(userName);
+  public Users updateUser(Users users) {
 
-    if (users == null) {
-      log.debug("User not found for userName {}", userName);
-      return Optional.empty();
+    log.info("Fetching user by email {}", users.getEmailId());
+    Optional<Users> usersOptional = getUserByEmailId(users.getEmailId());
+    if (usersOptional.isEmpty()) {
+      log.info("User not found for email {}", users.getEmailId());
+      throw new UserManagementServiceException(
+          HttpStatus.BAD_REQUEST,
+          USER_NOT_FOUND_TO_UPDATE,
+          new Object[] {users.getEmailId()},
+          messageSource);
     }
-    log.info("User found for userName {}", userName);
-    return Optional.of(users);
+
+    return userRepository.save(users);
   }
 
   @Override
