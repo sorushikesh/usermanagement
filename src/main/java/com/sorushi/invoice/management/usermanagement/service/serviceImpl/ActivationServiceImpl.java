@@ -75,7 +75,7 @@ public class ActivationServiceImpl implements ActivationService {
     } catch (MessagingException e) {
       log.error("Failed to send OTP email to {} due to {}", email, e.getMessage());
       throw new UserManagementServiceException(
-          HttpStatus.BAD_REQUEST, FAILED_TO_SEND_MAIL, null, messageSource);
+          HttpStatus.BAD_REQUEST, FAILED_TO_SEND_MAIL, new Object[] {email}, messageSource);
     }
   }
 
