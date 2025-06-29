@@ -26,10 +26,8 @@ public class ActivationController {
   }
 
   @PostMapping(value = REQUEST, produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ResponseBody> requestOtp(
-      @RequestBody UserDetails userDetails, @RequestHeader("Accept") String acceptHeader) {
+  public ResponseEntity<ResponseBody> requestOtp(@RequestBody UserDetails userDetails) {
     log.info("User activation process start for user {}", userDetails.getEmailId());
-    log.info("Header {}", acceptHeader);
     activationService.generateAndSendOtp(userDetails.getEmailId());
     return ResponseEntity.status(HttpStatus.OK)
         .body(ResponseBody.builder().status(SUCCESS).messages(List.of(OTP_SEND_SUCCESS)).build());
